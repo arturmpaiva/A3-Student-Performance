@@ -42,9 +42,18 @@ copyData['Participation in Extracurricular Activities'] = copyData['Participatio
 #plt.show()
 
 # Distribuição da variável de frequência
-sns.displot(copyData['Attendance Rate'])
-plt.title('Frequência')
-plt.show()
+#sns.displot(copyData['Attendance Rate'])
+#plt.title('Frequência')
+#plt.show()
 
+# Distribuição da variável de nível de escolaridade dos pais
+#educationLevelGraph = sns.countplot(x='Parent Education Level', data=copyData)
+#plt.title('Escolaridade dos pais')
 
+# Mostrar valores exatos para cada nível de escolaridade
+#for p in educationLevelGraph.patches:
+#    educationLevelGraph.annotate(f'{int(p.get_height())}', (p.get_x() + p.get_width() / 2., p.get_height()), 
+#                ha='center', va='baseline', fontsize=12, color='black', xytext=(0, 5), 
+#                textcoords='offset points')
+#plt.show()
 
