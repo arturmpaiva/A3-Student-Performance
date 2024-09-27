@@ -7,10 +7,11 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 
 data = pd.read_csv('student_performance_prediction.csv')
+
 # Criando uma cópia dos dados para manipulação, mantendo os dados originais intactos
 copyData = data.copy()
 
-# Tratar valores numéricos nulos, trocando o nulo pelo valor da média
+# Tratar variáveis numéricas de valor nulo, substituindo pelo valor da média
 count = 0
 for variavel in copyData.columns:
     if count == 0:
@@ -18,31 +19,39 @@ for variavel in copyData.columns:
     elif count < 4:
         copyData[variavel] = copyData[variavel].fillna(copyData[variavel].mean())
         count += 1
-
     
-# Colocar valores infinitos como Nulos
+# Colocar variáveis infinitas como Nulos
 #copyData['Study Hours per Week'] = copyData['Study Hours per Week'].replace([np.inf, -np.inf], np.nan)
 
-# Assinalando valores para dados não numéricos (variáveis categóricas)
+# Tratar variáveis não numéricas assinalando valores binários (variáveis categóricas)
 copyData['Passed'] = copyData['Passed'].map({'Yes': 1, 'No': 0})
 copyData['Participation in Extracurricular Activities'] = copyData['Participation in Extracurricular Activities'].map({'Yes': 1, 'No': 0})
-# Nível de escolaridade dos pais é uma variável categórica nominal
+
+# Criando variáveis dummy (indicadoras) para uma variável categórica nominal - escolaridade
 dummies = pd.get_dummies(copyData['Parent Education Level'])
+
+# Transformar variáveis categóricas em uma matriz de variáveis dummy e depois num array numpy
 ohe = OneHotEncoder()
 feature_array = ohe.fit_transform(copyData[['Parent Education Level']]).toarray()
+
 # Visualizar as categorias da variável em colunas
 feature_labels = ohe.categories_
-# Criando um array
+
+# Transformando o array de categorias em uma lista simples
 feature_labels = np.array(feature_labels).ravel()
-# Transformando os arrays em um data frame
+
+# Converte o array feature_array em um data frame e define o nome das colunas com os rótulos de feature_labels
 features = pd.DataFrame(feature_array, columns = feature_labels)
 
-# Juntando a variavel dummy e as colunas OHE para a base de dados original
-data_new = pd.concat([copyData, dummies, features], axis=1)
-data_new = data_new.drop(columns='Parent Education Level', axis=1)
+# Juntando a variavel dummy e as colunas OHE para a base de dados original e deleta a original
+dataNew = pd.concat([copyData, dummies, features], axis=1)
+dataNew = dataNew.drop(columns='Parent Education Level', axis=1)
 
-print(data_new.head())
-
+# Definindo as variáveis explicativas e a variável alvo
+y = dataNew.Passed
+x = dataNew.drop(columns='Passed', axis=1)
+print(y)
+print(x)
 
 # Histograma
 #plt.figure(figsize=(8,6))
