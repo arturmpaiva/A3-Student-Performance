@@ -5,6 +5,7 @@ import seaborn as sns
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+from sklearn import metrics
 
 data = pd.read_csv('student_performance_prediction.csv')
 
@@ -27,9 +28,6 @@ for variavel in copyData.columns:
 copyData['Passed'] = copyData['Passed'].map({'Yes': 1, 'No': 0})
 copyData['Participation in Extracurricular Activities'] = copyData['Participation in Extracurricular Activities'].map({'Yes': 1, 'No': 0})
 
-# Criando variáveis dummy (indicadoras) para uma variável categórica nominal - escolaridade
-dummies = pd.get_dummies(copyData['Parent Education Level'])
-
 # Transformar variáveis categóricas em uma matriz de variáveis dummy e depois num array numpy
 ohe = OneHotEncoder()
 feature_array = ohe.fit_transform(copyData[['Parent Education Level']]).toarray()
@@ -44,14 +42,43 @@ feature_labels = np.array(feature_labels).ravel()
 features = pd.DataFrame(feature_array, columns = feature_labels)
 
 # Juntando a variavel dummy e as colunas OHE para a base de dados original e deleta a original
-dataNew = pd.concat([copyData, dummies, features], axis=1)
+dataNew = pd.concat([copyData, features], axis=1)
 dataNew = dataNew.drop(columns='Parent Education Level', axis=1)
+
+# Colocar a coluna 'Passed' como a última
+colunas = [col for col in dataNew.columns if col != 'Passed']
+
+# Adiciona a coluna 'Passed' no final
+colunas.append('Passed')
+
+# Reordenamos o DataFrame com base nas novas colunas
+dataNew = dataNew[colunas]
+
+# Visualizando o resultado
+# print(dataNew.head())
 
 # Definindo as variáveis explicativas e a variável alvo
 y = dataNew.Passed
 x = dataNew.drop(columns='Passed', axis=1)
-print(y)
-print(x)
+# print(y)
+# print(x)
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 2)
+# print(x.shape, x_train.shape, x_test.shape)
+
+# Linear Regression
+reg = LinearRegression()
+# reg.fit(x_train.values, y_train.values)
+
+# Prevendo pelos dados treinados
+train_data_pred = reg.predict(x_train.values)
+
+# R squared value
+r2_train = metrics.r2_score(y_train, train_data_pred)
+#print('r2 squared value: ', r2_train)
+
+
+
 
 # Histograma
 #plt.figure(figsize=(8,6))
