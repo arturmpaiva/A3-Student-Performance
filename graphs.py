@@ -17,6 +17,8 @@ copyData = data.copy()
 
 # Eliminar valores nulos, substituindo pelo valor da média nas variáveis numéricas, por "No" para a variável Participação de Atividades
 # Extracurriculares e por "High School" para a variável Nível de Escolaridade dos Pais
+# Eliminando também alguns dados errados (negativos e infinitos)
+
 count = 0
 for variavel in copyData.columns:
     if count == 0:
@@ -100,22 +102,20 @@ r2_test = metrics.r2_score(y_test, test_data_pred)
 print('r2 squared value: ', r2_test)
 
 # Gerar o gráfico
-sns.displot(y_train - train_data_pred, kde=True)
+sns.displot(y_train - train_data_pred, kde = True)
 
 # Adicionar o título
 plt.title('Residual: ', size=18)
 
-# Adicionar rótulos exatos nas barras (contagem)
-for p in plt.gca().patches:
-    plt.gca().annotate(f'{p.get_height()}', (p.get_x() + p.get_width() / 2, p.get_height()), ha='center', va='bottom')
-
-# Exibir o gráfico
-plt.show()
 # Residual: diferencia entre a variável alvo e a predição
-#sns.displot(y_train - train_data_pred)
-#plt.title('Residual: ', size=18)
-#plt.show()
+sns.displot(y_train - train_data_pred)
+plt.title('Residual: ', size=18)
+plt.show()
 
+
+#   CRIANDO SISTEMA PREDITIVO
+
+inputData = (40001, 17, )
 
 # Histograma
 #plt.figure(figsize=(8,6))
